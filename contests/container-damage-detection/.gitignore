@@ -1,0 +1,14 @@
+# 数据（原始竞赛数据集与生成的 YOLO 数据集不入库，见 README「数据准备」）
+data/raw/
+data/yolo_dataset/
+
+# 训练输出（可由 train_yolo.py 重新生成）
+runs/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.idea/
+.ipynb_checkpoints/
+.DS_Store

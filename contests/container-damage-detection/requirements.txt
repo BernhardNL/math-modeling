@@ -1,0 +1,16 @@
+# 依赖清单（Python 3.10）
+# 训练 YOLO 需要 NVIDIA GPU（CUDA）；其余脚本 CPU 即可。
+
+numpy>=1.24.0
+opencv-python>=4.8.0
+scikit-image>=0.21.0
+scikit-learn>=1.3.0
+lightgbm>=4.0.0
+matplotlib>=3.7.0
+tqdm>=4.65.0
+python-docx>=1.0.0
+PyYAML>=6.0
+
+# YOLO 检测（问题2 最终方案）
+torch>=2.0.0
+ultralytics==8.4.117
