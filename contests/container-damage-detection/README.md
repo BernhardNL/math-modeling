@@ -20,7 +20,7 @@ container-damage-detection/
 ├── README.md
 ├── requirements.txt          # 依赖（Python 3.10）
 ├── data/
-│   ├── raw/                  # 原始竞赛数据集（不入库，需自行放置）
+│   ├── raw/                  # 原始竞赛数据集（已入库：train 3300 / test 413）
 │   ├── splits/               # YOLO 训练/验证划分（train 2642 / val 658）
 │   └── yolo_dataset/         # prepare_data.py 生成（不入库）
 ├── models/                   # 训练好的模型（问题1 三个 pkl + 问题2 LGBM + YOLO）
@@ -48,8 +48,8 @@ pip install -r requirements.txt   # 或使用项目 .venv
 
 ### 数据准备
 
-将竞赛原始数据集（含 `images/train`、`images/test`、`labels/train`、`labels/test`、`classes.txt`）
-放置到 `data/raw/dataset/`，然后：
+原始竞赛数据集已入库于 `data/raw/dataset/`（train 3300 张 / test 413 张，含标注与 `classes.txt`）。
+克隆仓库后直接运行：
 
 ```bash
 python problem2/prepare_data.py    # 按固定划分构建 data/yolo_dataset
@@ -120,6 +120,6 @@ python paper/generate_paper.py             # 生成 output/论文_集装箱破�
   Acc=89.72%，Macro F1=0.855；`problem3/evaluate.py` 已按训练时相同的随机消耗
   顺序——先建训练集再建验证集、两者之间无特征提取——复现该验证集）。
   论文 4.5.4 中记录的轻量 RF 仅为滑动窗口预筛选的历史实验，非最终分类器。
-- `data/raw` 与 `data/yolo_dataset` 不入库；克隆后按上文放置数据并运行
-  `prepare_data.py` 即可复现全部流程。
+- `data/yolo_dataset` 为生成产物不入库（可由 `prepare_data.py` 重建）；
+  原始数据集已入库于 `data/raw/dataset/`（185M，train 3300 / test 413）。
 - 训练 YOLO 约需 8GB 显存（batch=16, imgsz=640）；推理 CPU 可用但较慢。
