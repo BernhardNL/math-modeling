@@ -85,7 +85,6 @@ def main():
                     round(yc, 6),
                     round(w, 6),
                     round(h, 6),
-                    round(cf, 4),
                 ])
 
         if (i + 1) % 100 == 0:
@@ -93,8 +92,10 @@ def main():
 
     with open(out_csv, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["image_name", "class", "x_center", "y_center",
-                         "width", "height", "confidence"])
+        # 官方提交格式（见选题D/test_result.csv 样例）：
+        # image_id,class_id,x_center,y_center,width,height（YOLO 归一化坐标）
+        writer.writerow(["image_id", "class_id", "x_center", "y_center",
+                         "width", "height"])
         writer.writerows(all_rows)
 
     n_with_det = len(set(r[0] for r in all_rows))
