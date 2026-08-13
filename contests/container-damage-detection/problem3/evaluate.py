@@ -14,6 +14,7 @@ Usage:
 import sys
 import json
 import pickle
+import random
 from pathlib import Path
 
 import numpy as np
@@ -33,6 +34,20 @@ from src.classifier import evaluate_classifier
 np.random.seed(RANDOM_SEED)
 
 
+def _canonical_split(labels):
+    """重置随机种子后做划分。
+
+    划分与负样本采样都消耗全局随机数（split_train_val 的 shuffle 与
+    _sample_negative_patches 的随机位置），若评估顺序不同，验证集不同、
+    结果不可复现。训练脚本（problem1/train.py、problem2/patch_classify.py）
+    的消耗顺序固定为「划分 → 建训练集 → 建验证集」，评估必须逐字复现该顺序，
+    否则拿到的验证集与模型选择时不一致，论文 4.4 节数据无法复现。
+    """
+    random.seed(RANDOM_SEED)
+    np.random.seed(RANDOM_SEED)
+    return split_train_val(list(labels.keys()), labels, val_ratio=0.20)
+
+
 def evaluate_problem1():
     """问题1：51 维特征 + 逻辑回归 + 贝叶斯阈值。"""
     print("=" * 60)
@@ -47,7 +62,11 @@ def evaluate_problem1():
     print(f"  模型: LR C={clf.C:.4f}, 贝叶斯阈值 τ={tau:.4f}")
 
     labels = load_all_labels(LABELS_TRAIN)
-    _, val_ids = split_train_val(list(labels.keys()), labels, val_ratio=0.20)
+    train_ids, val_ids = _canonical_split(labels)
+    # 先构造训练集（丢弃）以消耗与训练时相同的随机序列，
+    # 否则验证集负样本采样位置不同、指标不可复现（见 _canonical_split）。
+    build_problem1_dataset(
+        train_ids, labels, IMAGES_TRAIN, neg_per_image=2, verbose=False)
     X_val, y_val, _, _ = build_problem1_dataset(
         val_ids, labels, IMAGES_TRAIN, neg_per_image=2, verbose=True)
 
@@ -80,7 +99,11 @@ def evaluate_problem2_patch():
     hog_pca = pickle.load(open(MODELS_DIR / "hog_pca_stage_c.pkl", "rb"))
 
     labels = load_all_labels(LABELS_TRAIN)
-    _, val_ids = split_train_val(list(labels.keys()), labels, val_ratio=0.20)
+    train_ids, val_ids = _canonical_split(labels)
+    # 与训练相同的随机消耗顺序：先建训练集再建验证集（见 _canonical_split）。
+    build_problem2_dataset(
+        train_ids, labels, IMAGES_TRAIN, neg_per_image=2, verbose=False,
+        neg_mode="hard_mixed")
     X_val, y_val, _, _ = build_problem2_dataset(
         val_ids, labels, IMAGES_TRAIN, neg_per_image=2, verbose=True,
         neg_mode="hard_mixed")

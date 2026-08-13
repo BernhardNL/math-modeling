@@ -115,9 +115,11 @@ python paper/generate_paper.py             # 生成 output/论文_集装箱破�
 - **ultralytics 版本必须为 8.4.117**：`train_yolo.py` 通过 monkey-patch 修改
   `BboxLoss`/`v8DetectionLoss` 内部接口实现 Wise-IoU 与 SlideLoss，
   接口随版本变化，升级前需核对签名。
-- `patch_classify.py` 当前训练 LightGBM（与 models/ 中保存的模型一致）；
-  论文 4.3–4.4 节记录的 Random Forest（85.68%）为早期实验结果，两者结论一致：
-  patch 分类可用、滑窗检测失效。
+- `patch_classify.py` 训练 LightGBM（n=1000, num_leaves=63, lr=0.1），与
+  `models/rf_stage_c.pkl` 一致，也与论文 4.3–4.4 节一致（验证集 2703 个 patch，
+  Acc=89.72%，Macro F1=0.855；`problem3/evaluate.py` 已按训练时相同的随机消耗
+  顺序——先建训练集再建验证集、两者之间无特征提取——复现该验证集）。
+  论文 4.5.4 中记录的轻量 RF 仅为滑动窗口预筛选的历史实验，非最终分类器。
 - `data/raw` 与 `data/yolo_dataset` 不入库；克隆后按上文放置数据并运行
   `prepare_data.py` 即可复现全部流程。
 - 训练 YOLO 约需 8GB 显存（batch=16, imgsz=640）；推理 CPU 可用但较慢。
