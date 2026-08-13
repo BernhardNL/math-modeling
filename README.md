@@ -1,6 +1,12 @@
-git# math-modeling
+# math-modeling
 
 数学建模学习与练习的 monorepo，收纳所有建模相关的子项目。
+
+## 竞赛项目
+
+- [集装箱破损检测（选题D）](contests/container-damage-detection) — 2026 校赛：
+  图像级分类 + YOLOv8s-P2 检测 + 系统评估，论文见
+  `contests/container-damage-detection/output/论文_集装箱破损检测.docx`
 
 ## 目录结构
 
